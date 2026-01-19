@@ -159,3 +159,10 @@ export const CAREER_OPENINGS = [
   { id: 2, title: "Ingénieur Hydrogéologue", type: "CDI", location: "Siège", description: "Expertise en études géophysiques et cartographie des nappes." },
   { id: 3, title: "Agent de Maintenance", type: "CDD", location: "Région des Plateaux", description: "Spécialiste pompes et réseaux de distribution." }
 ];
+
+export const FAQ_DATA = [
+  { question: "Quelle est la profondeur maximale de vos forages ?", answer: "Nous pouvons atteindre jusqu'à 250 mètres de profondeur selon la structure géologique du terrain pour garantir un débit pérenne." },
+  { question: "Combien de temps dure un forage domestique ?", answer: "En général, entre 3 et 5 jours ouvrés, de l'installation de la foreuse jusqu'à la mise en service du système de pompage." },
+  { question: "Quelles garanties offrez-vous ?", answer: "Toutes nos installations sont garanties 2 ans. Nous offrons également un contrat de maintenance pour assurer la longévité de vos équipements." },
+  { question: "Intervenez-vous en dehors de Lomé ?", answer: "Oui, nous couvrons l'intégralité du territoire togolais ainsi que les pays limitrophes pour des projets industriels et agricoles." }
+];

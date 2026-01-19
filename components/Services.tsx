@@ -5,7 +5,7 @@ import ScrollReveal from './ScrollReveal';
 
 const Services: React.FC = () => {
   return (
-    <section id="services" className="py-24 bg-white dark:bg-slate-950 relative overflow-hidden">
+    <section id="services" className="py-24 bg-white dark:bg-slate-950 relative overflow-hidden scroll-mt-20">
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-cyan-50 dark:bg-cyan-900/10 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

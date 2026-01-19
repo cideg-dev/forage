@@ -9,19 +9,23 @@ import Gallery from './components/Gallery';
 import Testimonials from './components/Testimonials';
 import Partners from './components/Partners';
 import Careers from './components/Careers';
+import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import ScrollReveal from './components/ScrollReveal';
 import AnimatedCounter from './components/AnimatedCounter';
 
 const App: React.FC = () => {
+  const whatsappNumber = "22893445076";
+  const whatsappMessage = encodeURIComponent("Bonjour, j'aimerais avoir des informations sur vos services de forage.");
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <Navbar />
       <main>
         <Hero />
         
-        {/* Stats Banner with Ocean styling */}
+        {/* Stats Banner */}
         <section className="bg-cyan-700 py-16 relative overflow-hidden" aria-label="Nos statistiques">
           <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-around items-center gap-12 relative z-10">
             {[
@@ -45,9 +49,12 @@ const App: React.FC = () => {
         <Gallery />
         <Projects />
         <Testimonials />
+        <div id="faq">
+          <FAQ />
+        </div>
         <Partners />
         
-        {/* Call to action section with aquatic touch */}
+        {/* Call to action section */}
         <section className="py-24 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-900 dark:to-blue-900">
            <ScrollReveal className="max-w-7xl mx-auto px-4 text-center">
              <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
@@ -56,7 +63,16 @@ const App: React.FC = () => {
              <p className="text-xl text-cyan-50 mb-10 max-w-2xl mx-auto font-medium opacity-90">
                Nos équipes sont mobilisables immédiatement pour étudier votre terrain et proposer la solution la plus adaptée à vos besoins.
              </p>
-             <a href="#contact" className="bg-white text-cyan-900 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-slate-100 transition-all shadow-2xl inline-block focus:ring-4 focus:ring-cyan-200 outline-none transform hover:-translate-y-1">
+             <a 
+               href="#contact?subject=devis" 
+               onClick={(e) => {
+                 e.preventDefault();
+                 const el = document.getElementById('contact');
+                 if (el) el.scrollIntoView({ behavior: 'smooth' });
+                 window.location.hash = 'contact?subject=devis';
+               }}
+               className="bg-white text-cyan-900 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-slate-100 transition-all shadow-2xl inline-block focus:ring-4 focus:ring-cyan-200 outline-none transform hover:-translate-y-1"
+             >
                Demander un devis gratuit
              </a>
            </ScrollReveal>
@@ -67,7 +83,19 @@ const App: React.FC = () => {
       </main>
       <Footer />
       
-      {/* Floating Action Button for mobile calls */}
+      {/* WhatsApp Floating Button */}
+      <a 
+        href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-24 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-90 flex items-center justify-center group"
+        aria-label="Contacter sur WhatsApp"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-14.08 9.01 9.01 0 0 1 5.3 1.5l3.2-1.1z"/></svg>
+        <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:ml-2 transition-all duration-500 font-bold">WhatsApp</span>
+      </a>
+
+      {/* Phone Floating Button */}
       <a 
         href="tel:93445076" 
         className="md:hidden fixed bottom-6 right-6 z-50 bg-cyan-600 text-white p-4 rounded-full shadow-2xl animate-bounce outline-none focus:ring-4 focus:ring-cyan-400"
