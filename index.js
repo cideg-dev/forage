@@ -117,14 +117,14 @@ const Navbar = ({ toggleTheme, isDark }) => {
           </button>
           <button onClick={() => scrollToSection('contact')} className="bg-cyan-600 text-white px-5 py-2 rounded-full font-semibold">Contact</button>
         </div>
-        <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X className="text-white" /> : <Menu className={scrolled ? 'text-slate-900 dark:text-white' : 'text-white'} />}
+        <button className="md:hidden p-2" onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? <X className={scrolled ? 'text-slate-900 dark:text-white' : 'text-white'} /> : <Menu className={scrolled ? 'text-slate-900 dark:text-white' : 'text-white'} />}
         </button>
       </div>
       {isOpen && (
-        <div className="md:hidden bg-white dark:bg-slate-900 p-4 space-y-4">
+        <div className="md:hidden bg-white dark:bg-slate-900 p-4 space-y-4 shadow-xl border-t dark:border-slate-800">
           {['Accueil', 'Services', 'About', 'Projets', 'Contact'].map(item => (
-            <button key={item} onClick={() => scrollToSection(item.toLowerCase())} className="block w-full text-left font-bold text-slate-900 dark:text-white py-2">{item}</button>
+            <button key={item} onClick={() => scrollToSection(item.toLowerCase())} className="block w-full text-left font-bold text-slate-900 dark:text-white py-2 px-4 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg">{item}</button>
           ))}
         </div>
       )}
@@ -142,6 +142,7 @@ const App = () => {
     const newTheme = !isDark;
     setIsDark(newTheme);
     document.documentElement.classList.toggle('dark');
+    localStorage.theme = newTheme ? 'dark' : 'light';
   };
 
   return (
@@ -157,21 +158,21 @@ const App = () => {
             <h1 className="text-5xl md:text-7xl font-black mb-6">La <span className="text-cyan-400">Force</span> de l'Eau</h1>
             <p className="text-xl md:text-2xl font-bold italic text-cyan-200 mb-8">{FULL_NAME}</p>
             <p className="max-w-2xl mx-auto text-slate-300 text-lg mb-10">{SLOGAN}</p>
-            <div className="flex justify-center gap-4">
-              <a href="#services" className="bg-cyan-600 px-8 py-4 rounded-xl font-bold text-lg">Nos Services</a>
-              <a href={`tel:${CONTACT_PHONES[0]}`} className="bg-white/10 px-8 py-4 rounded-xl font-bold text-lg border border-white/20">Contactez-nous</a>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <a href="#services" className="bg-cyan-600 hover:bg-cyan-700 transition-colors px-8 py-4 rounded-xl font-bold text-lg shadow-xl">Nos Services</a>
+              <a href={`tel:${CONTACT_PHONES[0]}`} className="bg-white/10 hover:bg-white/20 transition-colors px-8 py-4 rounded-xl font-bold text-lg border border-white/20 backdrop-blur-md">Contactez-nous</a>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="bg-cyan-700 py-16">
+      <section className="bg-cyan-700 py-16 relative">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-around gap-12 text-white">
-          {[{l:"Forages", v:"500+"}, {l:"Régions", v:"15+"}, {l:"Alimentées", v:"10k+"}].map((s, i) => (
+          {[{l:"Forages Réussis", v:"500+"}, {l:"Régions Couvertes", v:"15+"}, {l:"Alimentées", v:"10k+"}].map((s, i) => (
             <ScrollReveal key={i} className="text-center">
-              <AnimatedCounter value={s.v} className="text-5xl font-black" />
-              <div className="uppercase text-xs font-bold opacity-80">{s.l}</div>
+              <AnimatedCounter value={s.v} className="text-5xl font-black mb-1" />
+              <div className="uppercase text-xs font-bold opacity-80 tracking-widest">{s.l}</div>
             </ScrollReveal>
           ))}
         </div>
@@ -182,14 +183,14 @@ const App = () => {
         <div className="max-w-7xl mx-auto px-4">
           <ScrollReveal className="text-center mb-16">
             <h2 className="text-cyan-600 font-bold uppercase mb-4 tracking-widest">Expertise</h2>
-            <h3 className="text-3xl md:text-5xl font-black">Solutions de Forage</h3>
+            <h3 className="text-3xl md:text-5xl font-black dark:text-white">Solutions de Forage</h3>
           </ScrollReveal>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {SERVICES.map((s, i) => (
-              <ScrollReveal key={s.id} delay={i * 100} className="bg-slate-50 dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800">
-                <div className="mb-6">{s.icon}</div>
-                <h4 className="text-xl font-bold mb-4">{s.title}</h4>
-                <p className="text-slate-600 dark:text-slate-400">{s.description}</p>
+              <ScrollReveal key={s.id} delay={i * 100} className="bg-slate-50 dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                <div className="mb-6 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm inline-block">{s.icon}</div>
+                <h4 className="text-xl font-bold mb-4 dark:text-white">{s.title}</h4>
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{s.description}</p>
               </ScrollReveal>
             ))}
           </div>
@@ -197,68 +198,77 @@ const App = () => {
       </section>
 
       {/* Gallery */}
-      <section className="py-24 bg-slate-950 text-white">
+      <section className="py-24 bg-slate-950 text-white overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <ScrollReveal className="mb-12">
-            <h2 className="text-cyan-400 font-bold uppercase mb-4">Galerie</h2>
-            <h3 className="text-3xl font-black">Opérations de terrain</h3>
+            <h2 className="text-cyan-400 font-bold uppercase mb-4 tracking-widest">Galerie</h2>
+            <h3 className="text-3xl font-black mb-6">Opérations de terrain</h3>
           </ScrollReveal>
-          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl relative">
-            <img src={GALLERY_IMAGES[0].url} className="w-full h-full object-cover" />
-            <div className="absolute bottom-0 p-6 bg-gradient-to-t from-black w-full text-left font-bold">{GALLERY_IMAGES[0].caption}</div>
+          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl relative border border-slate-800">
+            <img src={GALLERY_IMAGES[0].url} className="w-full h-full object-cover" alt="Galerie" />
+            <div className="absolute bottom-0 p-8 bg-gradient-to-t from-black w-full text-left">
+              <p className="font-bold text-xl">{GALLERY_IMAGES[0].caption}</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="py-24 bg-white dark:bg-slate-950">
-        <div className="max-w-3xl mx-auto px-4">
-          <h3 className="text-3xl font-black text-center mb-12">FAQ</h3>
-          <div className="space-y-4">
-            {FAQ_DATA.map((f, i) => (
-              <div key={i} className="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border dark:border-slate-800">
-                <h4 className="font-bold mb-2">{f.question}</h4>
-                <p className="text-slate-600 dark:text-slate-400">{f.answer}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact */}
+      {/* Contact Section */}
       <section id="contact" className="py-24 bg-slate-50 dark:bg-slate-900 scroll-mt-20">
-        <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-2 gap-12">
-          <ScrollReveal>
-            <h3 className="text-4xl font-black mb-8">Discutons de votre projet</h3>
-            <div className="space-y-6">
-              {CONTACT_PHONES.map(p => (
-                <div key={p} className="flex items-center gap-4 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm">
-                  <Phone className="text-cyan-600" /> <span className="font-bold">{p}</span>
+        <div className="max-w-5xl mx-auto px-4">
+          <ScrollReveal className="text-center mb-16">
+             <h2 className="text-cyan-600 font-bold uppercase mb-4 tracking-widest">Contact</h2>
+             <h3 className="text-3xl md:text-5xl font-black dark:text-white">Discutons de votre projet</h3>
+          </ScrollReveal>
+          
+          <div className="grid md:grid-cols-2 gap-12">
+            <ScrollReveal className="space-y-6">
+              {CONTACT_PHONES.map((p, idx) => (
+                <div key={idx} className="flex items-center gap-4 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                  <div className="bg-cyan-50 dark:bg-cyan-900/30 p-3 rounded-xl"><Phone className="text-cyan-600" /></div>
+                  <div>
+                    <div className="text-xs uppercase font-bold text-slate-400 mb-1">Téléphone</div>
+                    <a href={`tel:${p}`} className="font-bold text-lg dark:text-white hover:text-cyan-600 transition-colors">{p}</a>
+                  </div>
                 </div>
               ))}
-            </div>
-          </ScrollReveal>
-          <ScrollReveal className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-xl">
-            <form className="space-y-4" onSubmit={e => { e.preventDefault(); alert('Merci !'); }}>
-              <input className="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-xl" placeholder="Votre Nom" required />
-              <textarea className="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-xl" rows="4" placeholder="Votre projet..." required></textarea>
-              <button className="w-full bg-cyan-600 text-white font-bold py-4 rounded-xl shadow-lg">Envoyer la demande</button>
-            </form>
-          </ScrollReveal>
+            </ScrollReveal>
+            
+            <ScrollReveal className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700">
+              <form className="space-y-4" onSubmit={e => { e.preventDefault(); alert('Votre message a bien été envoyé ! Nous vous recontacterons sous peu.'); }}>
+                <input className="w-full p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none dark:text-white" placeholder="Votre Nom" required />
+                <textarea className="w-full p-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none dark:text-white" rows="4" placeholder="Description de votre projet (lieu, type de terrain...)" required></textarea>
+                <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:scale-[1.02]">Envoyer la demande</button>
+              </form>
+            </ScrollReveal>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12 text-center border-t border-slate-800">
-        <div className="flex justify-center items-center gap-2 mb-4">
-          <Droplets className="text-cyan-600" /> <span className="font-black text-xl">{COMPANY_NAME}</span>
+      <footer className="bg-slate-900 text-white py-16 text-center border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-center items-center gap-2 mb-6">
+            <div className="bg-cyan-600 p-2 rounded-lg"><Droplets className="text-white w-6 h-6" /></div>
+            <span className="font-black text-xl tracking-tight">{COMPANY_NAME}</span>
+          </div>
+          <p className="text-slate-400 italic mb-2">"{FULL_NAME}"</p>
+          <p className="font-bold text-cyan-400 mb-8 tracking-widest">{SLOGAN}</p>
+          <div className="pt-8 border-t border-slate-800 text-slate-500 text-sm">
+            © {new Date().getFullYear()} {COMPANY_NAME}. Tous droits réservés.
+          </div>
         </div>
-        <p className="text-slate-500 text-sm">© {new Date().getFullYear()} {FULL_NAME}. Tous droits réservés.</p>
       </footer>
 
       {/* Floating WhatsApp */}
-      <a href={`https://wa.me/${whatsappNumber}`} target="_blank" className="fixed bottom-6 right-6 bg-[#25D366] p-4 rounded-full shadow-2xl hover:scale-110 transition-transform">
+      <a 
+        href={`https://wa.me/${whatsappNumber}`} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 bg-[#25D366] p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-50 group flex items-center justify-center"
+      >
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-14.08 9.01 9.01 0 0 1 5.3 1.5l3.2-1.1z"/></svg>
+        <span className="absolute right-full mr-3 bg-white text-slate-900 px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border whitespace-nowrap">Parlons sur WhatsApp</span>
       </a>
     </div>
   );
