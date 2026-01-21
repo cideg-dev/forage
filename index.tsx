@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+import { GoogleGenAI } from "@google/genai";
 import { 
   Droplets, Construction, Settings, Waves, Map, Pipette, Wrench, GraduationCap, Factory,
   Menu, X, Moon, Sun, Search, Phone, ArrowRight, CheckCircle2, MapPin, Clock, Send, CheckCircle,
-  ChevronLeft, ChevronRight, Play, ExternalLink, ShieldCheck, Target, Droplet
+  ChevronLeft, ChevronRight, Play, ExternalLink, ShieldCheck, Target, Droplet, MessageSquare, Bot, Sparkles, Calculator
 } from 'lucide-react';
 
 // --- CONFIGURATION & DONNÉES ---
@@ -106,6 +107,239 @@ const SectionDivider = ({ color = "#001220", flip = false }) => (
     </div>
 );
 
+// --- COMPOSANT AQUA-BOT IA ---
+
+const AquaBot = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<{role: 'user' | 'bot', text: string}[]>([
+    {role: 'bot', text: "Bonjour ! Je suis AquaBot, l'expert IA du Docteur des Profondeurs. Comment puis-je vous aider dans votre projet hydraulique aujourd'hui ?"}
+  ]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    const userMsg = input;
+    setInput("");
+    setMessages(prev => [...prev, {role: 'user', text: userMsg}]);
+    setIsTyping(true);
+
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `Vous êtes AquaBot, l'assistant expert de la société de forage "Docteur des Profondeurs" au Togo. 
+        Répondez de manière professionnelle, courtoise et technique sur le forage, l'hydraulique et les puits. 
+        Informations société : Slogan "${SLOGAN}", Téléphone "${CONTACT_PHONES[0]}". 
+        Question client : ${userMsg}`,
+        config: { temperature: 0.7, maxOutputTokens: 500 }
+      });
+      
+      setMessages(prev => [...prev, {role: 'bot', text: response.text || "Désolé, j'ai rencontré une petite bulle d'erreur. Pouvez-vous répéter ?"}]);
+    } catch (error) {
+      setMessages(prev => [...prev, {role: 'bot', text: "Oups, ma connexion sous-marine est instable. Essayez WhatsApp !"}]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  return (
+    <div className="fixed bottom-28 right-10 z-[100]">
+      {isOpen ? (
+        <div className="glass-card w-80 md:w-96 h-[500px] flex flex-col rounded-[2rem] shadow-2xl animate-in slide-in-from-bottom-5 duration-300 overflow-hidden border-2 border-cyan-500/30">
+          <div className="bg-cyan-600 p-6 flex justify-between items-center text-white">
+            <div className="flex items-center gap-2">
+              <Bot size={24} />
+              <span className="font-black text-sm uppercase tracking-widest">AquaBot IA</span>
+            </div>
+            <button onClick={() => setIsOpen(false)}><X size={20}/></button>
+          </div>
+          <div ref={scrollRef} className="flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar bg-slate-900/40">
+            {messages.map((m, i) => (
+              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] p-4 rounded-2xl text-sm font-medium ${m.role === 'user' ? 'bg-cyan-600 text-white rounded-tr-none' : 'glass-card text-blue-100 rounded-tl-none border-cyan-500/20'}`}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+            {isTyping && <div className="text-cyan-400 text-xs animate-pulse italic">AquaBot analyse les profondeurs...</div>}
+          </div>
+          <div className="p-4 bg-white/5 border-t border-white/10 flex gap-2">
+            <input 
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Posez votre question technique..."
+              className="flex-1 bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-white text-sm outline-none focus:border-cyan-500 transition-all"
+            />
+            <button onClick={handleSend} className="bg-cyan-600 p-2 rounded-xl text-white hover:bg-blue-600 transition-all"><Send size={20}/></button>
+          </div>
+        </div>
+      ) : (
+        <button 
+          onClick={() => setIsOpen(true)}
+          className="bg-blue-600 text-white p-6 rounded-full shadow-[0_20px_60px_rgba(37,99,235,0.4)] hover:scale-110 transition-transform flex items-center justify-center relative active:scale-95 border-2 border-white/20"
+        >
+          <Bot size={32} />
+          <span className="absolute -top-1 -right-1 flex h-4 w-4">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-4 w-4 bg-cyan-500"></span>
+          </span>
+        </button>
+      )}
+    </div>
+  );
+};
+
+// --- CALCULATEUR DE PROJET ---
+
+const ProjectCalculator = () => {
+  const [step, setStep] = useState(1);
+  const [data, setData] = useState({ type: '', terrain: '', depth: 50 });
+  const [result, setResult] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const calculateEstimate = async () => {
+    setLoading(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      const prompt = `Générez une estimation préliminaire professionnelle pour un forage au Togo :
+      Type : ${data.type}
+      Terrain : ${data.terrain}
+      Profondeur souhaitée : ${data.depth}m.
+      Donnez une fourchette de prix estimative (FCFA), les défis techniques potentiels et le temps d'exécution. 
+      Soyez encourageant mais précisez que c'est une estimation non-contractuelle.`;
+      
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: prompt
+      });
+      setResult(response.text || "Impossible de générer l'estimation.");
+      setStep(4);
+    } catch (e) {
+      setResult("Désolé, nos serveurs de calcul sont sous l'eau. Contactez-nous pour un devis précis.");
+      setStep(4);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="py-24 bg-gradient-to-b from-[#002147] to-[#001220] relative">
+      <div className="max-w-4xl mx-auto px-4">
+        <ScrollReveal className="text-center mb-16">
+          <div className="bg-cyan-600/20 text-cyan-400 p-3 rounded-2xl inline-block mb-4"><Calculator size={32}/></div>
+          <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">Calculateur de <span className="text-cyan-400">Projet Intelligent</span></h2>
+          <p className="text-blue-100/60 mt-4">Estimez la faisabilité de votre forage en 3 clics grâce à notre IA.</p>
+        </ScrollReveal>
+
+        <div className="glass-card rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-2xl relative overflow-hidden min-h-[400px]">
+          {loading && (
+            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex flex-col items-center justify-center">
+              <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-cyan-400 font-bold animate-pulse">Sondage du sous-sol par l'IA...</p>
+            </div>
+          )}
+
+          {step === 1 && (
+            <div className="space-y-8 animate-in fade-in duration-500">
+              <h4 className="text-2xl font-bold text-white text-center">1. Quel type de forage ?</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {['Domestique (Puits)', 'Industriel / Agricole'].map(t => (
+                  <button 
+                    key={t}
+                    onClick={() => { setData({...data, type: t}); setStep(2); }}
+                    className="glass-card p-6 rounded-2xl border-white/10 hover:border-cyan-500 hover:bg-cyan-600/20 transition-all text-white font-bold uppercase tracking-widest text-sm"
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-8 animate-in slide-in-from-right duration-500">
+              <h4 className="text-2xl font-bold text-white text-center">2. Nature du terrain estimée</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {['Sableux / Argileux', 'Rocheux / Dur', 'Inconnu'].map(t => (
+                  <button 
+                    key={t}
+                    onClick={() => { setData({...data, terrain: t}); setStep(3); }}
+                    className="glass-card p-6 rounded-2xl border-white/10 hover:border-cyan-500 hover:bg-cyan-600/20 transition-all text-white font-bold uppercase tracking-widest text-xs"
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => setStep(1)} className="text-cyan-400 underline w-full text-center">Retour</button>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-8 animate-in slide-in-from-right duration-500">
+              <h4 className="text-2xl font-bold text-white text-center">3. Profondeur visée : <span className="text-cyan-400">{data.depth}m</span></h4>
+              <input 
+                type="range" min="30" max="250" step="10" 
+                value={data.depth}
+                onChange={(e) => setData({...data, depth: parseInt(e.target.value)})}
+                className="w-full h-3 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" 
+              />
+              <div className="flex justify-between text-xs text-blue-200 uppercase font-bold">
+                <span>30m</span>
+                <span>Profondeur Abyssale (250m)</span>
+              </div>
+              <button 
+                onClick={calculateEstimate}
+                className="w-full bg-cyan-600 text-white font-black py-6 rounded-2xl uppercase tracking-[0.2em] shadow-xl hover:bg-blue-600 transition-all flex items-center justify-center gap-3"
+              >
+                Générer l'estimation IA <Sparkles size={20}/>
+              </button>
+              <button onClick={() => setStep(2)} className="text-cyan-400 underline w-full text-center">Retour</button>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-8 animate-in zoom-in duration-500">
+              <div className="flex items-center gap-3 text-cyan-400 mb-4 border-b border-white/10 pb-4">
+                <Sparkles size={24}/>
+                <h4 className="text-xl font-black uppercase italic">Votre Estimation Personnalisée</h4>
+              </div>
+              <div className="text-blue-100 text-sm leading-relaxed whitespace-pre-wrap glass-card p-6 rounded-2xl border-cyan-500/20">
+                {result}
+              </div>
+              <div className="flex flex-col md:flex-row gap-4">
+                <button 
+                  onClick={() => setStep(1)} 
+                  className="flex-1 border-2 border-white/20 text-white font-bold py-4 rounded-xl hover:bg-white/10 transition-all"
+                >
+                  Nouveau Calcul
+                </button>
+                <button 
+                  onClick={() => { 
+                    const contactSection = document.getElementById('contact');
+                    if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="flex-1 bg-cyan-600 text-white font-bold py-4 rounded-xl hover:bg-blue-600 transition-all shadow-lg"
+                >
+                  Valider avec un Expert
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// --- AUTRES COMPOSANTS ---
+
 const CompletedProjects = () => {
   const [curr, setCurr] = useState(0);
   const next = () => setCurr((curr + 1) % COMPLETED_PROJECTS.length);
@@ -155,7 +389,7 @@ const CompletedProjects = () => {
   );
 };
 
-// --- APPLICATION PRINCIPALE ---
+// --- APP COMPONENT ---
 
 const App = () => {
   const [formData, setFormData] = useState({ name: '', contact: '', subject: 'Demande de devis forage', message: '' });
@@ -188,6 +422,7 @@ const App = () => {
   return (
     <div className="min-h-screen transition-colors duration-300 relative">
       <Bubbles />
+      <AquaBot />
       
       {/* Navigation Aquatique */}
       <nav className="fixed w-full z-50 bg-white/10 dark:bg-slate-900/40 backdrop-blur-xl py-4 border-b border-white/10 shadow-lg">
@@ -260,7 +495,7 @@ const App = () => {
       {/* Wave Transition */}
       <SectionDivider color="#001220" />
 
-      {/* Services Section - Style Bulles */}
+      {/* Services Section */}
       <section id="services" className="py-24 bg-[#001220] scroll-mt-20 relative">
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <ScrollReveal className="text-center mb-24">
@@ -282,62 +517,15 @@ const App = () => {
         </div>
       </section>
 
-      <SectionDivider color="#001220" flip={true} />
+      {/* Calculateur de Projet Interactif */}
+      <ProjectCalculator />
 
-      {/* Section Vidéos - Sous l'eau */}
-      <section className="py-24 bg-[#002147] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-            <ScrollReveal className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 bg-blue-900/50 text-cyan-400 px-4 py-2 rounded-full mb-4 font-black text-[10px] uppercase tracking-widest border border-white/10">
-                <Play size={12} fill="currentColor" /> Caméra de forage
-              </div>
-              <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter leading-none">La Vue des <span className="text-blue-400">Profondeurs</span></h2>
-            </ScrollReveal>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[1,2,3].map(i => (
-                    <div key={i} className="aspect-[4/5] rounded-[3rem] overflow-hidden glass-card group cursor-pointer relative">
-                        <img src={`https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&q=80&w=600&sig=${i}`} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110" alt="Video" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/40 group-hover:bg-cyan-600 group-hover:scale-110 transition-all">
-                                <Play className="text-white fill-current" />
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-      </section>
+      <SectionDivider color="#001220" flip={true} />
 
       {/* Projects Carousel */}
       <CompletedProjects />
 
-      {/* CTA Ocean Theme */}
-      <section className="py-24 bg-gradient-to-b from-[#001220] to-[#0077be] relative overflow-hidden">
-         <ScrollReveal className="max-w-7xl mx-auto px-4 text-center relative z-10">
-            <h2 className="text-5xl md:text-8xl font-black text-white mb-8 italic uppercase tracking-tighter leading-none">
-              Prêt pour <span className="text-cyan-200">l'Immersion</span> ?
-            </h2>
-            <p className="text-xl text-blue-50 mb-12 max-w-2xl mx-auto font-medium opacity-90 leading-relaxed">
-              Ne laissez pas vos terres se dessécher. Contactez le Docteur pour une expertise chirurgicale de votre sous-sol.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
-               <button 
-                 onClick={() => handleCTA('Demande de devis forage', "Je souhaite obtenir un devis pour un forage à : ", 'form-message')}
-                 className="bg-white text-blue-900 px-12 py-6 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-cyan-500 hover:text-white transition-all shadow-2xl transform hover:-translate-y-1 active:scale-95"
-               >
-                 Obtenir mon Devis
-               </button>
-               <button 
-                 onClick={() => handleCTA('Expertise Géophysique', "Demande d'étude scientifique du terrain.", 'form-name')}
-                 className="bg-transparent text-white border-2 border-white/30 px-12 py-6 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/10 transition-all active:scale-95"
-               >
-                 Analyse Géophysique
-               </button>
-            </div>
-         </ScrollReveal>
-      </section>
-
-      {/* Contact Section - Deep Ocean Style */}
+      {/* Contact Section */}
       <section id="contact" className="py-24 bg-[#000d1a] scroll-mt-20 relative">
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -396,7 +584,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* Abyss Footer */}
+      {/* Footer */}
       <footer className="bg-[#000810] text-white py-20 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex justify-center items-center gap-3 mb-12">
@@ -408,14 +596,6 @@ const App = () => {
           </p>
         </div>
       </footer>
-
-      {/* WhatsApp Ocean Style */}
-      <a href={WHATSAPP_LINK} target="_blank" className="fixed bottom-10 right-10 z-[100] group">
-         <div className="bg-cyan-500 text-white p-6 rounded-full shadow-[0_20px_60px_rgba(0,184,212,0.4)] group-hover:scale-110 transition-transform flex items-center justify-center relative active:scale-95">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-14.08 9.01 9.01 0 0 1 5.3 1.5l3.2-1.1z"/></svg>
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-black animate-pulse">1</span>
-         </div>
-      </a>
     </div>
   );
 };
