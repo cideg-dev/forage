@@ -3,82 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docteur des Profondeurs | Expert Forages Hydrauliques au Togo</title>
-    <meta name="description" content="Spécialiste en forages mécaniques, industriels et maintenance hydraulique. Accès à l'eau potable partout au Togo et en Afrique de l'Ouest.">
+    <title>Docteur des Profondeurs | Expertise Hydraulique Certifiée</title>
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ocean-deep: #001220;
-            --ocean-mid: #002147;
-            --ocean-surface: #0077be;
-            --sea-salt: #f0f9ff;
+            --ocean-deep: #020617;
+            --ocean-accent: #0ea5e9;
         }
         body { 
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--ocean-deep);
-            color: var(--sea-salt);
+            color: #f8fafc;
+            line-height: 1.6;
         }
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 1s cubic-bezier(0.2, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         
-        /* Custom Wave Effect */
-        .wave-container {
-            position: relative;
-            width: 100%;
-            height: 100px;
-            overflow: hidden;
-            line-height: 0;
-        }
-        .wave-container svg {
-            position: relative;
-            display: block;
-            width: calc(100% + 1.3px);
-            height: 100px;
-        }
-
-        /* Glassmorphism */
         .glass-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s ease;
         }
+        .glass-card:hover {
+            border-color: var(--ocean-accent);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+        }
+
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-subtle { animation: subtle-float 8s ease-in-out infinite; }
         
-        @keyframes float {
-          0% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-15px) rotate(1deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-
-        @keyframes drift {
-            from { background-position: 0 0; }
-            to { background-position: 1000px 1000px; }
-        }
-        .ocean-bg {
-            background-image: radial-gradient(circle at 50% 50%, rgba(0, 119, 190, 0.1) 0%, transparent 80%);
-            background-attachment: fixed;
-        }
-
-        /* Bubble effect */
-        .bubble {
-            position: absolute;
-            bottom: -20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: rise 15s infinite ease-in;
-            pointer-events: none;
-        }
-        @keyframes rise {
-            0% { transform: translateY(0); opacity: 0; }
-            5% { opacity: 0.5; }
-            100% { transform: translateY(-100vh); opacity: 0; }
-        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ocean-accent); }
     </style>
     <script type="importmap">
 {
@@ -88,13 +60,13 @@
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?deps=react@19.0.0,react-dom@19.0.0",
     "lucide-react": "https://esm.sh/lucide-react@0.475.0?deps=react@19.0.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
   }
 }
 </script>
 </head>
-<body class="ocean-bg">
+<body class="hero-gradient">
     <div id="root"></div>
     <script type="text/babel" data-type="module" data-presets="react,typescript" src="index.tsx"></script>
 </body>
