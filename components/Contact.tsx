@@ -31,12 +31,33 @@ const Contact: React.FC = () => {
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash;
-      if (hash.includes('subject=devis')) {
-        setFormData(prev => ({ ...prev, subject: 'Demande de devis forage' }));
+      if (!hash.includes('contact')) return;
+
+      const queryString = hash.split('?')[1];
+      if (queryString) {
+        const params = new URLSearchParams(queryString);
+        const subjectParam = params.get('subject');
+        const messageParam = params.get('message');
+        const targetField = params.get('focus');
+
+        setFormData(prev => ({
+          ...prev,
+          subject: subjectParam === 'devis' ? 'Demande de devis forage' : (subjectParam || prev.subject),
+          message: messageParam || prev.message
+        }));
+
+        // Focus le champ spécifié après le défilement
+        if (targetField) {
+          setTimeout(() => {
+            const el = document.getElementById(targetField);
+            if (el) el.focus();
+          }, 800);
+        }
       }
     };
+
     window.addEventListener('hashchange', handleHash);
-    handleHash();
+    handleHash(); // Appel initial au cas où on arrive directement sur le lien
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
@@ -65,7 +86,6 @@ const Contact: React.FC = () => {
     if (!validate()) return;
 
     setIsSubmitting(true);
-    // Simulation d'envoi
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSubmitting(false);
     setIsSubmitted(true);

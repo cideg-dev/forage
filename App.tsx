@@ -19,10 +19,11 @@ const App: React.FC = () => {
   const whatsappNumber = "22893445076";
   const whatsappMessage = encodeURIComponent("Bonjour, j'aimerais avoir des informations sur vos services de forage.");
 
-  const scrollToContact = () => {
+  const scrollToContactPrefilled = (subject: string, message: string, focusField: string) => {
     const el = document.getElementById('contact');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
-    window.location.hash = '#contact?subject=devis';
+    // Mise à jour de la hash avec les paramètres de pré-remplissage
+    window.location.hash = `#contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}&focus=${focusField}`;
   };
 
   return (
@@ -60,7 +61,7 @@ const App: React.FC = () => {
         </div>
         <Partners />
         
-        {/* Call to action section */}
+        {/* Call to action section améliorée */}
         <section className="py-24 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-900 dark:to-blue-900">
            <ScrollReveal className="max-w-7xl mx-auto px-4 text-center">
              <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">
@@ -69,12 +70,20 @@ const App: React.FC = () => {
              <p className="text-xl text-cyan-50 mb-10 max-w-2xl mx-auto font-medium opacity-90">
                Nos équipes sont mobilisables immédiatement pour étudier votre terrain et proposer la solution la plus adaptée à vos besoins.
              </p>
-             <button 
-               onClick={scrollToContact}
-               className="bg-white text-cyan-900 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-slate-100 transition-all shadow-2xl inline-block transform hover:-translate-y-1"
-             >
-               Demander un devis gratuit
-             </button>
+             <div className="flex flex-col sm:flex-row justify-center gap-6">
+               <button 
+                 onClick={() => scrollToContactPrefilled('devis', "Je souhaite obtenir un devis gratuit pour un nouveau forage. Mon terrain est situé à : ", 'message')}
+                 className="bg-white text-cyan-900 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-slate-100 transition-all shadow-2xl inline-block transform hover:-translate-y-1"
+               >
+                 Demander un devis gratuit
+               </button>
+               <button 
+                 onClick={() => scrollToContactPrefilled('Expertise Géophysique', "J'ai besoin d'une étude géophysique pour localiser l'eau sur ma parcelle.", 'name')}
+                 className="bg-transparent text-white border-2 border-white/30 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-white/10 transition-all inline-block transform hover:-translate-y-1"
+               >
+                 Étude de terrain
+               </button>
+             </div>
            </ScrollReveal>
         </section>
 
