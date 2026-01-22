@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { GALLERY_IMAGES } from '../constants.js';
 import ScrollReveal from './ScrollReveal.js';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const Gallery = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -12,7 +14,12 @@ const Gallery = () => {
           <h3 className="text-3xl font-black">Nos Opérations</h3>
         </ScrollReveal>
         <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl">
-          <img src={GALLERY_IMAGES[activeIndex].url} className="w-full h-full object-cover" />
+          <LazyLoadImage
+            src={GALLERY_IMAGES[activeIndex].url}
+            className="w-full h-full object-cover"
+            effect="blur"
+            alt={GALLERY_IMAGES[activeIndex].caption}
+          />
           <div className="absolute bottom-0 p-8 bg-gradient-to-t from-black w-full">
             <p className="font-bold">{GALLERY_IMAGES[activeIndex].caption}</p>
           </div>

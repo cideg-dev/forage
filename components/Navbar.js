@@ -1,107 +1,125 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Droplets, Menu, X, Moon, Sun, Search } from 'lucide-react';
-import { COMPANY_NAME, SERVICES, PROJECTS, FAQ_DATA, CAREER_OPENINGS } from '../constants.js';
+import React from 'react';
+import { Droplets, Moon, Sun, Menu, X } from 'lucide-react';
+import useStore from '../src/store/useStore';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const searchRef = useRef(null);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (searchQuery.length > 2) {
-      const query = searchQuery.toLowerCase();
-      const results = [
-        ...SERVICES.filter(s => s.title.toLowerCase().includes(query) || s.description.toLowerCase().includes(query))
-          .map(s => ({ title: s.title, snippet: s.description, link: 'services', category: 'Service' })),
-        ...PROJECTS.filter(p => p.title.toLowerCase().includes(query) || p.description.toLowerCase().includes(query))
-          .map(p => ({ title: p.title, snippet: p.description, link: 'projets', category: 'Projet' })),
-        ...FAQ_DATA.filter(f => f.question.toLowerCase().includes(query) || f.answer.toLowerCase().includes(query))
-          .map(f => ({ title: f.question, snippet: f.answer, link: 'faq', category: 'FAQ' })),
-        ...CAREER_OPENINGS.filter(c => c.title.toLowerCase().includes(query) || c.description.toLowerCase().includes(query))
-          .map(c => ({ title: c.title, snippet: c.description, link: 'careers', category: 'Carrière' }))
-      ];
-      setSearchResults(results.slice(0, 6));
-    } else {
-      setSearchResults([]);
-    }
-  }, [searchQuery]);
-
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.theme = 'dark';
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.theme = 'light';
-    }
-  };
-
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsOpen(false);
-    }
-  };
+const Navbar = ({ isDark, toggleTheme, scrollTo }) => {
+  const { mobileMenuOpen, toggleMobileMenu, closeMobileMenu, WHATSAPP_LINK } = useStore();
+  const { t } = useTranslation();
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-md py-2' : 'bg-transparent py-4'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('accueil')}>
-            <div className="bg-cyan-600 p-2 rounded-lg">
-              <Droplets className="text-white w-6 h-6" />
-            </div>
-            <span className={`font-bold text-lg hidden sm:block ${scrolled ? 'text-slate-900 dark:text-white' : 'text-white'}`}>
-              {COMPANY_NAME}
-            </span>
+    <nav className="fixed w-full z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md py-4 border-b-2 border-red-600" role="navigation" aria-label="Navigation principale">
+      <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:z-50">
+          Aller au contenu principal
+        </a>
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => scrollTo('accueil')} tabIndex="0" onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            scrollTo('accueil');
+          }
+        }}>
+          <div className="bg-cyan-600 p-2 rounded-xl shadow-lg">
+            <Droplets className="text-white" aria-hidden="true" />
           </div>
-
-          <div className="hidden md:flex items-center gap-6">
-            {['Accueil', 'Services', 'About', 'Projets'].map((item) => (
-              <button 
-                key={item}
-                onClick={() => scrollToSection(item.toLowerCase())}
-                className={`font-medium hover:text-cyan-600 transition-colors ${scrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'}`}
-              >
-                {item === 'About' ? 'À Propos' : item}
-              </button>
-            ))}
-            
-            <button 
-              onClick={toggleTheme}
-              className={`p-2 rounded-full ${scrolled ? 'text-slate-700 dark:text-slate-200' : 'text-white'}`}
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-
-            <button onClick={() => scrollToSection('contact')} className="bg-cyan-600 text-white px-5 py-2 rounded-full font-semibold">
-              Contact
-            </button>
-          </div>
-
-          <div className="md:hidden flex items-center gap-2">
-             <button 
-              onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-xl ${scrolled ? 'bg-slate-50 dark:bg-slate-800' : 'bg-white/10'}`}
-            >
-              {isOpen ? <X className="text-white" /> : <Menu className={scrolled ? 'text-slate-900 dark:text-white' : 'text-white'} />}
-            </button>
+          <div className="flex flex-col leading-none">
+            <span className="font-black text-xl tracking-tighter dark:text-white">DOCTEUR DES PROFONDEURS</span>
+            <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest italic">Expert Hydraulique</span>
           </div>
         </div>
+
+        {/* Menu desktop */}
+        <div className="hidden lg:flex items-center gap-8">
+          {[t('services'), t('projects'), t('contact')].map(item => (
+            <button
+              key={item}
+              onClick={() => {
+                // Mapper les traductions aux IDs originaux
+                const idMap = { [t('services')]: 'services', [t('projects')]: 'projets', [t('contact')]: 'contact' };
+                scrollTo(idMap[item]);
+              }}
+              className="font-black text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors dark:text-slate-300"
+              aria-label={item}
+            >
+              {item}
+            </button>
+          ))}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 dark:text-white"
+            aria-label={isDark ? t('switchToLightMode') || 'Passer en mode clair' : t('switchToDarkMode') || 'Passer en mode sombre'}
+          >
+            {isDark ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+          </button>
+          <LanguageSwitcher />
+          <a
+            href={WHATSAPP_LINK}
+            target="_blank"
+            className="bg-red-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-red-600/20"
+            aria-label={t('quickQuote')}
+          >
+            {t('quickQuote')}
+          </a>
+        </div>
+
+        {/* Menu mobile */}
+        <div className="lg:hidden">
+          <button
+            onClick={toggleMobileMenu}
+            className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
+            aria-label={mobileMenuOpen ? t('closeMenu') || 'Fermer le menu' : t('openMenu') || 'Ouvrir le menu'}
+          >
+            {mobileMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          </button>
+        </div>
       </div>
+
+      {/* Menu mobile ouvert */}
+      {mobileMenuOpen && (
+        <div
+          id="mobile-menu"
+          className="lg:hidden bg-white dark:bg-slate-900 p-4 mt-2 rounded-lg shadow-lg"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu mobile"
+        >
+          <div className="flex flex-col gap-4">
+            {[t('services'), t('projects'), t('contact')].map(item => (
+              <button
+                key={item}
+                onClick={() => {
+                  // Mapper les traductions aux IDs originaux
+                  const idMap = { [t('services')]: 'services', [t('projects')]: 'projets', [t('contact')]: 'contact' };
+                  scrollTo(idMap[item]);
+                  closeMobileMenu();
+                }}
+                className="font-black text-[11px] uppercase tracking-widest hover:text-red-600 transition-colors dark:text-slate-300 py-2 w-full text-left"
+                aria-label={item}
+              >
+                {item}
+              </button>
+            ))}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 dark:text-white w-fit"
+              aria-label={isDark ? t('switchToLightMode') || 'Passer en mode clair' : t('switchToDarkMode') || 'Passer en mode sombre'}
+            >
+              {isDark ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+            </button>
+            <LanguageSwitcher />
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              className="bg-red-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl shadow-red-600/20 w-fit"
+              aria-label={t('quickQuote')}
+            >
+              {t('quickQuote')}
+            </a>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
