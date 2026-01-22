@@ -1,15 +1,16 @@
-// public/sw.js
-const CACHE_NAME = 'forage-app-v1.0';
+// public/custom-sw.js
+// Service Worker personnalisé pour l'application PWA
+
+const CACHE_NAME = 'forage-v1.0';
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
   '/css/style.css',
-  '/js/bundle.js',
-  '/android-chrome-192x192.png',
-  '/android-chrome-512x512.png'
+  '/js/bundle.js'
 ];
 
+// Installer le service worker
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -20,6 +21,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// Intercepter les requêtes réseau
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
@@ -34,17 +36,9 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Suppression du cache ancien', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
+// Activer le service worker immédiatement
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

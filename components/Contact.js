@@ -5,6 +5,7 @@ import useStore from '../src/store/useStore';
 import { useTranslation } from 'react-i18next';
 import { validateForm, sanitizeFormData } from '../src/utils/validation';
 import { submitContactForm } from '../src/services/contactService';
+import Captcha from './Captcha';
 
 const Contact = ({ handleCTA }) => {
   const { formData, updateFormData, resetFormData } = useStore();
@@ -13,6 +14,7 @@ const Contact = ({ handleCTA }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [captchaVerified, setCaptchaVerified] = useState(false);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -29,14 +31,37 @@ const Contact = ({ handleCTA }) => {
     }
   };
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaVerified(!!value);
+    if (value && errors.captcha) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.captcha;
+        return newErrors;
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Valider les données du formulaire
     const validation = validateForm(formData);
 
+    // Vérifier le CAPTCHA
+    if (!captchaVerified) {
+      setErrors(prev => ({
+        ...prev,
+        captcha: t('captchaRequired') || 'Veuillez vérifier que vous êtes un humain.'
+      }));
+      return;
+    }
+
     if (!validation.isValid) {
-      setErrors(validation.errors);
+      setErrors(prev => ({
+        ...validation.errors,
+        ...prev
+      }));
       return;
     }
 
@@ -47,12 +72,18 @@ const Contact = ({ handleCTA }) => {
       // Nettoyer les données avant envoi
       const sanitizedData = sanitizeFormData(formData);
 
+      // Ajouter des vérifications supplémentaires avant l'envoi
+      if (!sanitizedData.name || !sanitizedData.contact || !sanitizedData.message) {
+        throw new Error('Données de formulaire incomplètes');
+      }
+
       // Envoyer les données au backend
       const result = await submitContactForm(sanitizedData);
 
       if (result.success) {
         setSubmitSuccess(true);
         resetFormData(); // Réinitialiser le formulaire après soumission réussie
+        setCaptchaVerified(false); // Réinitialiser le CAPTCHA
 
         // Réinitialiser l'état de succès après quelques secondes
         setTimeout(() => {
@@ -180,11 +211,25 @@ const Contact = ({ handleCTA }) => {
                 )}
               </div>
 
+              <Captcha
+                onChange={handleCaptchaChange}
+                onError={() => setErrors(prev => ({ ...prev, captcha: t('captchaError') || 'Erreur lors de la vérification CAPTCHA' }))}
+                onExpired={() => {
+                  setCaptchaVerified(false);
+                  setErrors(prev => ({ ...prev, captcha: t('captchaExpired') || 'Le CAPTCHA a expiré, veuillez réessayer' }));
+                }}
+              />
+              {errors.captcha && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.captcha}
+                </p>
+              )}
+
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !captchaVerified}
                 className={`w-full bg-red-600 text-white font-black py-6 rounded-[2rem] uppercase tracking-widest text-lg hover:bg-white hover:text-red-600 transition-all shadow-xl flex items-center justify-center gap-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 ${
-                  isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                  isSubmitting || !captchaVerified ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
                 aria-label={isSubmitting ? t("sending") || "Envoi en cours..." : t("send")}
               >

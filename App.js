@@ -17,6 +17,11 @@ import AnimatedCounter from './components/AnimatedCounter.js';
 import CompletedProjects from './components/CompletedProjects.js';
 import LiveOperations from './components/LiveOperations.js';
 import ServiceAreaMap from './components/ServiceAreaMap.js';
+import Blog from './components/Blog.js';
+import CookieConsent from './components/CookieConsent.js';
+import ProjectTracker from './components/ProjectTracker.js';
+import CostCalculator from './components/CostCalculator.js';
+import EnhancedGallery from './components/EnhancedGallery.js';
 import { useTranslation } from 'react-i18next';
 import './src/i18n/i18n'; // Importer la configuration i18n
 
@@ -76,6 +81,10 @@ const App = () => {
           <FAQ />
         </div>
         <ServiceAreaMap />
+        <Blog />
+        <ProjectTracker />
+        <CostCalculator />
+        <EnhancedGallery />
         <Partners />
 
         <section className="py-24 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-900 dark:to-blue-900" role="banner" aria-label={t("readyToDrill")}>
@@ -100,6 +109,8 @@ const App = () => {
         <Contact handleCTA={handleCTA} />
       </main>
       <Footer />
+
+      <CookieConsent />
 
       <a
         href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
