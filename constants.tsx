@@ -152,9 +152,9 @@ export const GALLERY_IMAGES = [
   { url: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=800", caption: "Analyses géophysiques avancées", type: "image" },
   { url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=800", caption: "Notre équipe sur le terrain", type: "image" },
   { url: "https://images.unsplash.com/photo-1454165833767-027eeea15c3e?auto=format&fit=crop&q=80&w=800", caption: "Planification et ingénierie hydraulique", type: "image" },
-  { url: "/assets/forage-lome.jpeg", caption: "Forage à Lomé", type: "image" },
-  { url: "/assets/forage-video-1.mp4", caption: "Vidéo Forage 1", type: "video" },
-  { url: "/assets/forage-video-2.mp4", caption: "Vidéo Forage 2", type: "video" }
+  { url: "/forage/assets/forage-lome.jpeg", caption: "Forage à Lomé", type: "image" },
+  { url: "/forage/assets/forage-video-1.mp4", caption: "Vidéo Forage 1", type: "video" },
+  { url: "/forage/assets/forage-video-2.mp4", caption: "Vidéo Forage 2", type: "video" }
 ];
 
 export const CAREER_OPENINGS = [
