@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { GALLERY_IMAGES } from '../constants';
-import ScrollReveal from './ScrollReveal';
+import { GALLERY_IMAGES } from '../constants.tsx';
+import ScrollReveal from './ScrollReveal.tsx';
 import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 
 const Gallery: React.FC = () => {

@@ -15,14 +15,14 @@
 
     <title>Docteur des Profondeurs | Expertise Hydraulique Certifiée</title>
 
-    <link rel="icon" type="image/x-icon" href="/android-chrome-72x72.png">
-    <link rel="apple-touch-icon" href="/android-chrome-192x192.png">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="android-chrome-72x72.png">
+    <link rel="apple-touch-icon" href="android-chrome-192x192.png">
+    <link rel="manifest" href="manifest.json">
 
     <!-- Liens vers les icônes pour différentes tailles -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/android-chrome-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/android-chrome-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="android-chrome-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="android-chrome-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -90,7 +90,7 @@
       // Enregistrer le service worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
+          navigator.serviceWorker.register('sw.js')
             .then(registration => {
               console.log('ServiceWorker enregistré avec succès:', registration.scope);
             })

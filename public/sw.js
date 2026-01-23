@@ -1,13 +1,11 @@
 // public/sw.js
 const CACHE_NAME = 'forage-app-v1.0';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/css/style.css',
-  '/js/bundle.js',
-  '/android-chrome-192x192.png',
-  '/android-chrome-512x512.png'
+  './',
+  'index.html',
+  'manifest.json',
+  'android-chrome-192x192.png',
+  'android-chrome-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {

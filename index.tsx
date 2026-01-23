@@ -6,9 +6,9 @@ import {
   Droplets, Construction, Settings, Waves, Map, Pipette, Wrench, GraduationCap, Factory,
   Menu, X, Phone, ArrowRight, Send, ChevronLeft, ChevronRight, Play, Bot, Sparkles, Calculator, ShieldCheck, Globe
 } from 'lucide-react';
-import Gallery from './components/Gallery';
+import Gallery from './components/Gallery.tsx';
 
-// --- DATA ---
+// --- CONFIGURATION & DONNÉES ---
 const COMPANY_NAME = "Docteur des Profondeurs";
 const FULL_NAME = "ETS: Docteur des Profondeurs Hydraulique";
 const CONTACT_PHONES = ["93 44 50 76", "97 77 03 50", "99 64 49 10"];
