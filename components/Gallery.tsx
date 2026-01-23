@@ -24,15 +24,23 @@ const Gallery: React.FC = () => {
           {GALLERY_IMAGES.map((img, idx) => (
             <div 
               key={idx}
-              className={`absolute inset-0 transition-opacity duration-1000 ${idx === activeIndex ? 'opacity-100' : 'opacity-0'}`}
+              className={`absolute inset-0 transition-opacity duration-1000 ${idx === activeIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
             >
-              <img 
-                src={img.url} 
-                alt={img.caption} 
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8">
+              {img.type === 'video' ? (
+                <video 
+                  src={img.url} 
+                  className="w-full h-full object-cover"
+                  controls
+                />
+              ) : (
+                <img 
+                  src={img.url} 
+                  alt={img.caption} 
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8 pointer-events-none">
                 <p className="text-xl font-bold text-cyan-200">{img.caption}</p>
               </div>
             </div>

@@ -6,6 +6,7 @@ import {
   Droplets, Construction, Settings, Waves, Map, Pipette, Wrench, GraduationCap, Factory,
   Menu, X, Phone, ArrowRight, Send, ChevronLeft, ChevronRight, Play, Bot, Sparkles, Calculator, ShieldCheck, Globe
 } from 'lucide-react';
+import Gallery from './components/Gallery';
 
 // --- DATA ---
 const COMPANY_NAME = "Docteur des Profondeurs";
@@ -282,6 +283,7 @@ const App = () => (
     <Navbar />
     <Hero />
     <Expertise />
+    <Gallery />
     <ProjectCalculator />
     <Contact />
     <AquaBot />
