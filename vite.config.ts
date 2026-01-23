@@ -20,7 +20,8 @@ export default defineConfig(({ mode }) => {
           strategies: 'generateSW',
           registerType: 'autoUpdate',
           workbox: {
-            globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,ttf,woff}'],
+            globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,gif,svg,mp4,webm,woff2,ttf,woff}'],
+            maximumFileSizeToCacheInBytes: 10000000, // 10 Mo
             runtimeCaching: [
               {
                 urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
